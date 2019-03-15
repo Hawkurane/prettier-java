@@ -246,8 +246,9 @@ function defineRules($, t) {
       {
         ALT: () => {
           $.SUBRULE($.unannClassOrInterfaceType);
-          $.OPTION(() => {
-            $.SUBRULE2($.dims);
+          $.OPTION({
+            GATE: $.BACKTRACK($.dims),
+            DEF: () => $.SUBRULE2($.dims)
           });
         }
       }
