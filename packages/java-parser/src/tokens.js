@@ -101,8 +101,8 @@ const Identifier = createTokenOrg({
 
 const allTokens = [];
 const tokenDictionary = {};
+
 function createToken(options) {
-  // TODO: create a test to check all the tokens have a label defined
   if (!options.label) {
     // simple token (e.g operator)
     if (typeof options.pattern === "string") {
@@ -174,7 +174,6 @@ createToken({
   pattern: MAKE_PATTERN("[\\x09\\x20\\x0C]|{{LineTerminator}}"),
   group: Lexer.SKIPPED
 });
-
 createToken({
   name: "LineComment",
   pattern: /\/\/[^\n\r]*/,
@@ -497,7 +496,6 @@ function sortDescLength(arr) {
     return b.length - a.length;
   });
 }
-
 module.exports = {
   allTokens,
   tokens: tokenDictionary

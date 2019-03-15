@@ -303,12 +303,15 @@ function defineRules($, t) {
   // https://docs.oracle.com/javase/specs/jls/se11/html/jls-9.html#jls-ElementValueList
   $.RULE("elementValueList", () => {
     $.SUBRULE($.elementValue);
-    $.MANY({
-      GATE: () => tokenMatcher($.LA(2).tokenType, t.RCurly) === false,
-      DEF: () => {
-        $.CONSUME(t.Comma);
+    $.MANY(() => {
+      $.CONSUME(t.Comma);
+      /*
+      To be compliant with the JAVA specification we should remove the Option.
+      However, JAVA accept that ElementValueList ends with a comma (,)
+      */
+      $.OPTION(() => {
         $.SUBRULE2($.elementValue);
-      }
+      });
     });
   });
 
