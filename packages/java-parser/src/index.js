@@ -27,7 +27,7 @@ function parse(inputText, entryPoint = "compilationUnit") {
         firstError.message
     );
   }
-
+  /*
   //Checking if all tokens have a LABEL
   lexResult.tokens.map(value => {
     if (!value.tokenType.LABEL) {
@@ -52,6 +52,7 @@ function parse(inputText, entryPoint = "compilationUnit") {
       }
     }
   });
+  */
 
   // Automatic CST created when parsing
   const cst = parser[entryPoint]();

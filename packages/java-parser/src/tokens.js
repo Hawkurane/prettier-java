@@ -1,7 +1,21 @@
 /* eslint-disable no-unused-vars */
 "use strict";
 const { createToken: createTokenOrg, Lexer } = require("chevrotain");
-const chars = require("./unicode");
+const fs = require("fs");
+const unicodesetInit = require("./unicode");
+const path = require("path");
+
+//Need to find a more beautiful way than this, generate in index.js at the lexer's declaration?
+try {
+  const thePath = path.resolve(__dirname, "unicodesets.js");
+  if (!fs.existsSync(thePath)) {
+    unicodesetInit.generateFile(thePath);
+  }
+} catch (err) {
+  throw err;
+}
+
+const chars = require("./unicodesets");
 // A little mini DSL for easier lexer definition.
 const fragments = {};
 
@@ -48,40 +62,20 @@ FRAGMENT(
 
 function matchJavaIdentifier(char, startOffset) {
   let endOffset = startOffset;
-  let charCode = char.charCodeAt(endOffset);
+  let charCode = char.codePointAt(endOffset);
 
   // We verifiy if the first character is from one of these categories
   // Corresponds to the isJavaIdentifierStart function from Java
-  if (
-    chars.unicode.Nl.has(charCode) ||
-    chars.unicode.Lo.has(charCode) ||
-    chars.unicode.Ll.has(charCode) ||
-    chars.unicode.Lt.has(charCode) ||
-    chars.unicode.Lm.has(charCode) ||
-    chars.unicode.Lu.has(charCode) ||
-    chars.unicode.Sc.has(charCode) ||
-    chars.unicode.Pc.has(charCode)
-  ) {
+  if (chars.firstIdentChar.has(charCode)) {
     endOffset++;
     charCode = char.charCodeAt(endOffset);
   }
 
   // We verify if the remaining characters is from one of these categories
   // Corresponds to the isJavaIdentifierPart function from Java
-  while (
-    (charCode >= 48 && charCode <= 57) ||
-    chars.unicode.Nl.has(charCode) ||
-    chars.unicode.Lo.has(charCode) ||
-    chars.unicode.Ll.has(charCode) ||
-    chars.unicode.Lt.has(charCode) ||
-    chars.unicode.Lm.has(charCode) ||
-    chars.unicode.Lu.has(charCode) ||
-    chars.unicode.Sc.has(charCode) ||
-    chars.unicode.Pc.has(charCode) ||
-    chars.unicode.Mn.has(charCode)
-  ) {
+  while (chars.restIdentChar.has(charCode)) {
     endOffset++;
-    charCode = char.charCodeAt(endOffset);
+    charCode = char.codePointAt(endOffset);
   }
 
   // No match, must return null to conform with the RegExp.prototype.exec signature
@@ -96,7 +90,11 @@ function matchJavaIdentifier(char, startOffset) {
 const Identifier = createTokenOrg({
   name: "Identifier",
   //pattern: MAKE_PATTERN("({{JavaIdentifierStart}})({{JavaIdentifierPart}})*")
-  pattern: { exec: matchJavaIdentifier }
+  pattern: { exec: matchJavaIdentifier },
+  line_breaks: false,
+  start_chars_hint: Array.from(chars.firstIdentChar, x =>
+    String.fromCodePoint(x)
+  )
 });
 
 const allTokens = [];

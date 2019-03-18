@@ -23,7 +23,8 @@ if (options.printErrors) {
 }
 
 const samplesDir = [];
-samplesDir.push(path.resolve(__dirname, "../samples/guava"));
+samplesDir.push(path.resolve(__dirname, "../samples/spring-boot"));
+samplesDir.push(path.resolve(__dirname, "../samples/fastjson"));
 /*
 samplesDir.push(path.resolve(__dirname, "../samples/BugTrackerJHipster"));
 samplesDir.push(path.resolve(__dirname, "../samples/java-design-patterns"));
