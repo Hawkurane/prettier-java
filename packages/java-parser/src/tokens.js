@@ -2,19 +2,6 @@
 "use strict";
 const { createToken: createTokenOrg, Lexer } = require("chevrotain");
 const fs = require("fs");
-const unicodesetInit = require("./unicode");
-const path = require("path");
-
-//Need to find a more beautiful way than this, generate in index.js at the lexer's declaration?
-try {
-  const thePath = path.resolve(__dirname, "unicodesets.js");
-  if (!fs.existsSync(thePath)) {
-    unicodesetInit.generateFile(thePath);
-  }
-} catch (err) {
-  throw err;
-}
-
 const chars = require("./unicodesets");
 // A little mini DSL for easier lexer definition.
 const fragments = {};

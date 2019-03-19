@@ -1,14 +1,14 @@
 "use strict";
-
-const path = require("path");
 const unicode = {};
-
 const fs = require("fs");
-
-const lines = fs
-  .readFileSync(path.resolve(__dirname, "UnicodeData.txt"), "utf-8")
-  .split("\n");
-
+const path = require("path");
+const args = process.argv.slice(2)[0];
+let lines;
+try {
+  lines = fs.readFileSync(args, "utf-8").split("\n");
+} catch (err) {
+  throw Error("Please specify the path of the UnicodeData.txt file");
+}
 // The Categories we only want to parse from the file.
 // We don't need to store characters from the UnicodeData file that we are not going to use
 
@@ -100,7 +100,7 @@ lines.forEach(line => {
   oldValue = theLine[0];
 });
 
-function generateFile(thePath) {
+function generateFile() {
   let data = `"use strict"
   const firstIdentChar = new Set([`;
   firstIdentCharCategories.forEach(el => {
@@ -125,12 +125,11 @@ function generateFile(thePath) {
     firstIdentChar,
     restIdentChar
   }`;
-  fs.writeFileSync(thePath, data, err => {
+  fs.writeFileSync(path.resolve(__dirname, "unicodesets.js"), data, err => {
     if (err) {
       throw err;
     }
   });
 }
-module.exports = {
-  generateFile
-};
+
+generateFile();
